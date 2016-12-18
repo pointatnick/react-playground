@@ -27,7 +27,7 @@ const videoA = {
 
 const videoB = {
   id: 'b',
-  title: 'Ember.js CLI'
+  title: 'Ember.js CLI',
   duration: 240,
   watched: false
 }
