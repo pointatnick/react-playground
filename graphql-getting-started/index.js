@@ -1,6 +1,7 @@
 const {
   GraphQLSchema,
   GraphQLObjectType,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLID,
   GraphQLString,
@@ -9,7 +10,7 @@ const {
   graphql
 } = require('graphql')
 
-const { getVideoById } = require('./src/data')
+const { getVideoById, getVideos } = require('./src/data')
 
 const videoType = new GraphQLObjectType({
   name: 'Video',
@@ -38,6 +39,10 @@ const queryType = new GraphQLObjectType({
   name: 'QueryType',
   description: 'The root query type',
   fields: {
+    videos: {
+      type: new GraphQLList(videoType),
+      resolve: getVideos
+    },
     video: {
       type: videoType,
       args: {
@@ -57,11 +62,8 @@ const schema = new GraphQLSchema({
 
 const query = `
   query myFirstQuery {
-    video {
-      id,
-      title,
-      duration,
-      watched
+    videos {
+      title
     }
   }
 `
