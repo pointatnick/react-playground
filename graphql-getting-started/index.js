@@ -10,23 +10,15 @@ const {
   GraphQLBoolean,
   graphql
 } = require('graphql')
-
-const {
-  getVideoById,
-  getVideos,
-  createVideo
-} = require('./src/data')
-
-const nodeInterface = require('./src/node')
+const { getVideoById, getVideos, createVideo } = require('./src/data')
+const { globalIdField } = require('graphql-relay')
+const { nodeInterface, nodeField } = require('./src/node')
 
 const videoType = new GraphQLObjectType({
   name: 'Video',
   description: 'A video on Egghead.io',
   fields: {
-    id: {
-      type: new GraphQLNonNull(GraphQLID),
-      description: 'The id of the video',
-    },
+    id: globalIdField(),
     title: {
       type: GraphQLString,
       description: 'The title of the video'
@@ -39,7 +31,7 @@ const videoType = new GraphQLObjectType({
       type: GraphQLBoolean,
       description: 'Whether or not the viewer has watched the video'
     }
-  }
+  },
   interfaces: [nodeInterface]
 })
 exports.videoType = videoType
@@ -48,6 +40,7 @@ const queryType = new GraphQLObjectType({
   name: 'QueryType',
   description: 'The root query type',
   fields: {
+    node: nodeField,
     videos: {
       type: new GraphQLList(videoType),
       resolve: getVideos
@@ -105,14 +98,11 @@ const schema = new GraphQLSchema({
 })
 
 const query = `
-  mutation M {
-    createVideo(video: {
-      title: "Foo",
-      duration: 300,
-      released: false
-    }) {
-      id,
-      title
+  query myQuery {
+    node(id: "VmlkZW86Um05dg==") {
+      ... on Video {
+        title
+      }
     }
   }
 `
